@@ -6,45 +6,65 @@ const ChatWindow = () => {
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      content: "Buenos días soy Pocki ¿Cómo puedo ayudarte hoy?",
+      content: "Buenos días, soy Pocki. ¿Cómo puedo ayudarte hoy?",
     },
   ]);
 
   const handleSend = async (text) => {
-    // Agregar mensaje del usuario
+    if (!text.trim()) return;
+
     const userMessage = { sender: "user", content: text };
     setMessages((prev) => [...prev, userMessage]);
 
-    // Petición al backend
-    const res = await fetch("http://localhost:3001/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: text, sender: "user" }),
-    });
+    try {
+      const res = await fetch("http://localhost:3001/messages/crearMensaje", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: text, sender: "user" }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    // Agregar mensaje del bot
-    if (data.aiResponse) {
-      const botMessage = { sender: "bot", content: data.aiResponse };
-      setMessages((prev) => [...prev, botMessage]);
+      if (data?.aiResponse) {
+        const botMessage = { sender: "bot", content: data.aiResponse };
+        setMessages((prev) => [...prev, botMessage]);
+      } else {
+        throw new Error("Respuesta inválida del servidor");
+      }
+    } catch (error) {
+      console.error("Error al conectar con el backend:", error.message);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          content: "⚠️ Hubo un problema al obtener la respuesta del bot.",
+        },
+      ]);
     }
   };
 
   return (
-    <div style={styles.chatBox}>
-      <div style={styles.header}>💬 Chat With Pocki</div>
-      <div style={styles.messages}>
-        {messages.map((msg, index) => (
-          <Message key={index} sender={msg.sender} content={msg.content} />
-        ))}
+    <div style={styles.wrapper}>
+      <div style={styles.chatBox}>
+        <div style={styles.header}>🤖 Chat With Pocki</div>
+        <div style={styles.messages}>
+          {messages.map((msg, index) => (
+            <Message key={index} sender={msg.sender} content={msg.content} />
+          ))}
+        </div>
+        <MessageInput onSend={handleSend} />
       </div>
-      <MessageInput onSend={handleSend} />
     </div>
   );
 };
 
 const styles = {
+  wrapper: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#f0f2f5",
+  },
   chatBox: {
     width: 400,
     height: 600,
@@ -54,6 +74,7 @@ const styles = {
     flexDirection: "column",
     overflow: "hidden",
     background: "#fff",
+    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
   },
   header: {
     backgroundColor: "#0C9C5E",
@@ -61,6 +82,7 @@ const styles = {
     padding: "10px",
     fontWeight: "bold",
     textAlign: "center",
+    fontSize: "1.1rem",
   },
   messages: {
     flex: 1,

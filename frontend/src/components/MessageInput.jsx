@@ -5,22 +5,21 @@ const MessageInput = ({ onSend }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (text.trim()) {
-      onSend(text);
-      setText("");
-    }
+    if (!text.trim()) return;
+    onSend(text.trim());
+    setText("");
   };
 
   return (
-    <form style={styles.container} onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={styles.form}>
       <input
         type="text"
-        style={styles.input}
         value={text}
+        placeholder="Escribe tu mensaje..."
         onChange={(e) => setText(e.target.value)}
-        placeholder="Escribe un mensaje..."
+        style={styles.input}
       />
-      <button style={styles.button} type="submit">
+      <button type="submit" style={styles.button}>
         Send
       </button>
     </form>
@@ -28,25 +27,27 @@ const MessageInput = ({ onSend }) => {
 };
 
 const styles = {
-  container: {
+  form: {
     display: "flex",
-    padding: 10,
+    padding: "10px",
     borderTop: "1px solid #ccc",
+    backgroundColor: "#fafafa",
   },
   input: {
     flex: 1,
-    padding: 10,
-    borderRadius: 7,
+    padding: "10px",
     border: "1px solid #ccc",
+    borderRadius: 5,
     outline: "none",
+    fontSize: "1rem",
   },
   button: {
-    marginLeft: 10,
-    padding: "0 20px",
-    borderRadius: 7,
+    marginLeft: "10px",
+    padding: "10px 15px",
     backgroundColor: "#0C9C5E",
     color: "white",
     border: "none",
+    borderRadius: 5,
     cursor: "pointer",
     fontWeight: "bold",
   },
