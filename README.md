@@ -46,6 +46,8 @@ Aplicación web de chatbot que permite al usuario enviar mensajes y recibir resp
 │ │ └── db.js
 │ ├── /routes
 │ │ └── messagesRoutes.js
+│ ├── /db
+│ │ └── db.sql
 │ ├── /swagger
 │ │ └── swagger.json
 │ ├── index.js
@@ -94,10 +96,10 @@ npm install
 
 PORT=3001
 DB_HOST=localhost
-DB_USER=tu_usuario
-DB_PASSWORD=tu_contraseña
-DB_NAME=nombre_de_tu_base_de_datos
-OPENAI_API_KEY=tu_api_key
+DB_USER = root
+DB_PASSWORD = 1234
+DB_NAME=chatbot_app
+DB_PORT = 3306
 
 
 ### Iniciar la aplicación
